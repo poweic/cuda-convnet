@@ -2,3 +2,4 @@ bin/*
 obj/*
 .svn/*
 _ConvNet.so
+*.pyc
