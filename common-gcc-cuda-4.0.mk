@@ -46,7 +46,7 @@ OSARCH= $(shell uname -m)
 # Basic directory setup for SDK
 # (override directories only if they are not already defined)
 SRCDIR     ?= 
-ROOTDIR    ?= $(CUDA_SDK_PATH)
+ROOTDIR    ?= $(BUILD_PATH)
 ROOTBINDIR ?= bin
 BINDIR     ?= $(ROOTBINDIR)/$(OSLOWER)
 ROOTOBJDIR ?= obj
@@ -328,9 +328,9 @@ ifneq ($(STATIC_LIB),)
 	TARGET   := $(subst .a,_$(LIB_ARCH)$(LIBSUFFIX).a,$(LIBDIR)/$(STATIC_LIB))
 	LINKLINE  = ar rucv $(TARGET) $(OBJS)
 else
-	ifneq ($(OMIT_CUTIL_LIB),1)
-		LIB += -lcutil_$(LIB_ARCH)$(LIBSUFFIX) -lshrutil_$(LIB_ARCH)$(LIBSUFFIX)
-	endif
+#	ifneq ($(OMIT_CUTIL_LIB),1)
+#		LIB += -lcutil_$(LIB_ARCH)$(LIBSUFFIX) -lshrutil_$(LIB_ARCH)$(LIBSUFFIX)
+#	endif
 	# Device emulation configuration
 	ifeq ($(emu), 1)
 		NVCCFLAGS   += -deviceemu
