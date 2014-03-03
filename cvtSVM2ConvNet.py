@@ -4,19 +4,20 @@ import os
 import math
 import pickle
 import numpy as np
+import sys
 
 import argparse
 parser = argparse.ArgumentParser()
 
 def read_svm_data(filename):
 
-  def svm_read_problem(data_file_name):
+  def svm_read_problem(filename):
 	  """
 	  Thanks to febeling !! (please visit https://github.com/febeling/libsvm/tree/master/python )
 	  """
 	  prob_y = []
 	  prob_x = []
-	  for line in open(data_file_name):
+	  for line in open(filename) if filename != "-" else sys.stdin:
 		  line = line.split(None, 1)
 		  # In case an instance with all zero features
 		  if len(line) == 1: line += ['']
@@ -35,7 +36,7 @@ def read_svm_data(filename):
   # Change 1-based index to 0-based index
   # If label in y starts from 1 instead of 0, it will CAUSE severe CRASH when training convnet.
   if not (min(y) == 1 or min(y) == 0):
-    raise AssertionError("\33[31mLabels " + filename + " must either be 0-based or 1-based array\33[0m")
+    raise AssertionError("\33[31mLabels must either be 0-based or 1-based array\33[0m")
 
   y = [i-1 for i in y] if min(y) == 1 else y
 
@@ -78,8 +79,7 @@ def make_batch_meta(filename, y, X, batchSize):
   meta['num_vis']	      = X.shape[0]
   meta['data_mean']	      = np.mean(X, axis=1, keepdims=1, dtype=np.float32)
 
-  f = open(filename, 'wb')
-  pickle.dump(meta, f)
+  pickle.dump(meta, open(filename, 'wb'))
 
 def make_batches(folder, y, X, batchSize):
 
@@ -104,8 +104,7 @@ def make_batches(folder, y, X, batchSize):
     batch['filenames']	 = [`i` + '.png' for i in list(range(istart, iend))]
 
     filename = folder + '/data_batch_' + `b`
-    f = open(filename, 'wb')
-    pickle.dump(batch, f)
+    pickle.dump(batch, open(filename, 'wb'))
 
 def cvtSVM2CudaConvNet(filename, nBatch, output_dir):
   y, X = read_svm_data(filename)
